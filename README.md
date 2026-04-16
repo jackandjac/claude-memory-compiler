@@ -33,7 +33,28 @@ Adapted from [coleam00/claude-memory-compiler](https://github.com/coleam00/claud
 - Python 3.12+ (check: `python3.13 --version` or `/opt/homebrew/bin/python3.13 --version`)
 - Wibey CLI or Claude Code
 
-### Install into Your Project
+### Option 1: Ask Wibey (Recommended)
+
+Open Wibey in your project and paste this prompt:
+
+```
+Clone https://gecgithub01.walmart.com/j0l0xg5/claude-memory-compiler-walmart.git to a temp
+directory, then run its setup.sh from my project root. This sets up Claude Code hooks so my
+conversations automatically get captured into daily logs, compiled into a knowledge base, and
+injected back into future sessions. Read the AGENTS.md for the full technical reference.
+```
+
+Wibey will clone the repo, run setup, and configure everything for you.
+
+### Option 2: Wibey Skill (One Command)
+
+If you have the skill installed, just type:
+
+```
+/setup-memory-compiler
+```
+
+### Option 3: Manual Setup
 
 ```bash
 # Clone this repo (one-time, from GEC GitHub)
@@ -46,7 +67,7 @@ cd /path/to/your-project
 bash /path/to/claude-memory-compiler-walmart/setup.sh
 ```
 
-The setup script:
+All three options do the same thing — the setup script:
 1. Copies hooks + scripts into `.claude-memory-compiler/` in your project
 2. Installs the `/compile-kb` slash command into `.wibey/commands/`
 3. Creates the `daily/`, `knowledge/`, `reports/` directory structure
