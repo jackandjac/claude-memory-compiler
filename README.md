@@ -20,8 +20,8 @@ Adapted from [coleam00/claude-memory-compiler](https://github.com/coleam00/claud
 │  Hook extracts conversation transcript                        │
 │  → flush.py appends structured context to daily/YYYY-MM-DD.md│
 ├──────────────────────────────────────────────────────────────┤
-│  Compilation (manual or scheduled)                            │
-│  daily/ logs → LLM compiler → knowledge/ articles            │
+│  Compilation (via /compile-kb command)                        │
+│  daily/ logs → Wibey compiler → knowledge/ articles          │
 │  Structured, cross-referenced, searchable knowledge base     │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -48,9 +48,10 @@ bash /path/to/claude-memory-compiler-walmart/setup.sh
 
 The setup script:
 1. Copies hooks + scripts into `.claude-memory-compiler/` in your project
-2. Creates the `daily/`, `knowledge/`, `reports/` directory structure
-3. Merges hook config into your `.claude/settings.json` (preserves existing hooks)
-4. Adds `.claude-memory-compiler/` to your `.gitignore`
+2. Installs the `/compile-kb` slash command into `.wibey/commands/`
+3. Creates the `daily/`, `knowledge/`, `reports/` directory structure
+4. Merges hook config into your `.claude/settings.json` (preserves existing hooks)
+5. Adds `.claude-memory-compiler/` to your `.gitignore`
 
 ### Start Using It
 
@@ -102,24 +103,32 @@ your-project/
 
 ## Compilation (Daily Logs → Knowledge Base)
 
-The automatic capture pipeline (hooks → flush.py → daily log) works with pure Python. The **compilation step** (daily logs → structured knowledge articles) requires the Claude Agent SDK, which can't be installed on the Walmart network via pip.
+The automatic capture pipeline (hooks → flush.py → daily log) works with pure Python and requires zero external dependencies. The **compilation step** (daily logs → structured knowledge articles) uses the `/compile-kb` Wibey slash command — no VPN disconnect, no pip installs, no external tools needed.
 
-### Option 1: Compile Inside a Wibey Session
+### Option 1: `/compile-kb` Slash Command (Recommended)
 
-Ask Wibey to compile manually:
+The setup script automatically installs a `/compile-kb` slash command into your project. Just run it in any Wibey session:
+
 ```
-Read .claude-memory-compiler/AGENTS.md for the schema, then read
-.claude-memory-compiler/daily/2026-04-15.md and compile it into
-knowledge articles following the schema. Write the articles to
-.claude-memory-compiler/knowledge/concepts/ and update the index.
+/compile-kb
 ```
 
-### Option 2: Compile Off-VPN
+This tells Wibey to:
+1. Read the `AGENTS.md` schema for knowledge article structure
+2. Scan `daily/` logs for unprocessed entries
+3. Extract concepts, decisions, patterns, and Q&A
+4. Create/update knowledge articles in `knowledge/concepts/`, `knowledge/connections/`, `knowledge/qa/`
+5. Update `knowledge/index.md` (master catalog) and `knowledge/log.md` (build log)
 
-If you have `uv` installed (off-VPN):
-```bash
-cd .claude-memory-compiler
-uv run python scripts/compile.py
+All compilation happens in-session using Wibey's built-in Read/Write/Edit tools — no external dependencies.
+
+### Option 2: Ask Wibey Directly
+
+You can also just ask Wibey in plain English:
+
+```
+Compile my daily logs into knowledge articles. Read .claude-memory-compiler/AGENTS.md
+for the schema, then process any new entries in .claude-memory-compiler/daily/.
 ```
 
 ### Option 3: Skip Compilation
