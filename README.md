@@ -37,7 +37,7 @@ Adapted from [coleam00/claude-memory-compiler](https://github.com/coleam00/claud
 
 ```bash
 # Clone this repo (one-time, from GEC GitHub)
-git clone https://gecgithub01.walmart.com/YOUR-ORG/claude-memory-compiler-walmart.git
+git clone https://gecgithub01.walmart.com/j0l0xg5/claude-memory-compiler-walmart.git
 
 # Go to your project
 cd /path/to/your-project
