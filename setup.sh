@@ -93,6 +93,18 @@ fi
 
 echo "  ✓ Files copied to $TARGET_DIR"
 
+# ── Step 1b: Install /compile-kb slash command ───────────────────────────
+echo "▸ Installing /compile-kb slash command..."
+COMMANDS_DIR="$PROJECT_DIR/.wibey/commands"
+mkdir -p "$COMMANDS_DIR"
+
+if [ -f "$SCRIPT_DIR/commands/compile-kb.md" ]; then
+    cp "$SCRIPT_DIR/commands/compile-kb.md" "$COMMANDS_DIR/"
+    echo "  ✓ /compile-kb command installed (use it to compile daily logs → knowledge articles)"
+else
+    echo "  ⚠ commands/compile-kb.md not found in source — skipping"
+fi
+
 # ── Step 2: Merge hooks into .claude/settings.json ───────────────────────
 echo "▸ Configuring hooks..."
 SETTINGS_DIR="$PROJECT_DIR/.claude"
