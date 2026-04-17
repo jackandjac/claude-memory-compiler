@@ -70,7 +70,7 @@ echo ""
 
 # ── Step 1: Copy files ───────────────────────────────────────────────────
 echo "▸ Copying files..."
-mkdir -p "$TARGET_DIR"/{hooks,scripts,knowledge/{concepts,connections,qa},daily,reports}
+mkdir -p "$TARGET_DIR"/{hooks,scripts,knowledge/{concepts,connections,qa,decisions,patterns},daily,reports}
 
 cp "$SCRIPT_DIR"/hooks/session-start.py  "$TARGET_DIR"/hooks/
 cp "$SCRIPT_DIR"/hooks/session-end.py    "$TARGET_DIR"/hooks/
@@ -89,6 +89,9 @@ if [ ! -f "$TARGET_DIR/knowledge/index.md" ]; then
 fi
 if [ ! -f "$TARGET_DIR/knowledge/log.md" ]; then
     cp "$SCRIPT_DIR"/knowledge/log.md "$TARGET_DIR"/knowledge/
+fi
+if [ ! -f "$TARGET_DIR/knowledge/meta-instructions.md" ]; then
+    cp "$SCRIPT_DIR"/knowledge/meta-instructions.md "$TARGET_DIR"/knowledge/
 fi
 
 echo "  ✓ Files copied to $TARGET_DIR"
