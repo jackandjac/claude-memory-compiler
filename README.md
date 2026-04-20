@@ -9,20 +9,22 @@ Adapted from [coleam00/claude-memory-compiler](https://github.com/coleam00/claud
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  Session Start                                                │
-│  Hook reads knowledge/index.md + latest daily log            │
-│  → Injects as context so Claude "remembers" past sessions    │
+│  Hook reads knowledge/index.md + meta-instructions +         │
+│  latest daily log → Injects as context so Claude "remembers" │
 ├──────────────────────────────────────────────────────────────┤
 │  During Session                                               │
 │  You work normally. PreCompact hook fires before              │
 │  auto-compaction to capture context that would be lost.       │
+│  Run /compile-kb anytime to checkpoint knowledge.             │
 ├──────────────────────────────────────────────────────────────┤
 │  Session End                                                  │
 │  Hook extracts conversation transcript                        │
 │  → flush.py appends structured context to daily/YYYY-MM-DD.md│
 ├──────────────────────────────────────────────────────────────┤
 │  Compilation (via /compile-kb command)                        │
-│  daily/ logs → Wibey compiler → knowledge/ articles          │
-│  Structured, cross-referenced, searchable knowledge base     │
+│  Extracts: concepts, decisions, patterns, dead ends,         │
+│  meta-instructions → knowledge/ articles                     │
+│  Run early, run often — every call is a checkpoint.          │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -70,9 +72,10 @@ bash /path/to/claude-memory-compiler-walmart/setup.sh
 All three options do the same thing — the setup script:
 1. Copies hooks + scripts into `.claude-memory-compiler/` in your project
 2. Installs the `/compile-kb` slash command into `.wibey/commands/`
-3. Creates the `daily/`, `knowledge/`, `reports/` directory structure
-4. Merges hook config into your `.claude/settings.json` (preserves existing hooks)
-5. Adds `.claude-memory-compiler/` to your `.gitignore`
+3. Creates the full directory structure (`daily/`, `knowledge/concepts/`, `knowledge/decisions/`, `knowledge/patterns/`, `knowledge/connections/`, `knowledge/qa/`, `reports/`)
+4. Bootstraps `knowledge/index.md`, `knowledge/log.md`, and `knowledge/meta-instructions.md`
+5. Merges hook config into your `.claude/settings.json` (preserves existing hooks)
+6. Adds `.claude-memory-compiler/` to your `.gitignore`
 
 ### Start Using It
 
@@ -111,50 +114,82 @@ your-project/
 │   │   ├── 2026-04-15.md
 │   │   └── ...
 │   ├── knowledge/                  # Compiled knowledge base
-│   │   ├── index.md                # Master catalog (read first)
+│   │   ├── index.md                # Master catalog (sectioned by type)
 │   │   ├── log.md                  # Build log
-│   │   ├── concepts/               # Atomic knowledge articles
+│   │   ├── meta-instructions.md    # Living doc of conventions & rules
+│   │   ├── concepts/               # WHAT — technical facts & configs
+│   │   ├── decisions/              # WHY — choices + rejected alternatives
+│   │   ├── patterns/               # HOW — reusable approaches & anti-patterns
 │   │   ├── connections/            # Cross-cutting insights
 │   │   └── qa/                     # Filed Q&A
 │   └── reports/                    # Lint reports
+├── .wibey/
+│   └── commands/
+│       └── compile-kb.md           # ← /compile-kb slash command
 ├── .claude/
 │   └── settings.json               # ← hooks configured here
 └── .gitignore                      # ← .claude-memory-compiler/ excluded
 ```
 
-## Compilation (Daily Logs → Knowledge Base)
+## Compilation (`/compile-kb`)
 
-The automatic capture pipeline (hooks → flush.py → daily log) works with pure Python and requires zero external dependencies. The **compilation step** (daily logs → structured knowledge articles) uses the `/compile-kb` Wibey slash command — no VPN disconnect, no pip installs, no external tools needed.
+The automatic capture pipeline (hooks → flush.py → daily log) works with pure Python and requires zero external dependencies. The **compilation step** uses the `/compile-kb` Wibey slash command — no VPN disconnect, no pip installs, no external tools needed.
 
-### Option 1: `/compile-kb` Slash Command (Recommended)
+### Incremental Save (Default)
 
-The setup script automatically installs a `/compile-kb` slash command into your project. Just run it in any Wibey session:
+Run anytime during a session to checkpoint knowledge:
 
 ```
 /compile-kb
 ```
 
-This tells Wibey to:
-1. Read the `AGENTS.md` schema for knowledge article structure
-2. Scan `daily/` logs for unprocessed entries
-3. Extract concepts, decisions, patterns, and Q&A
-4. Create/update knowledge articles in `knowledge/concepts/`, `knowledge/connections/`, `knowledge/qa/`
-5. Update `knowledge/index.md` (master catalog) and `knowledge/log.md` (build log)
+This extracts knowledge directly from the **current conversation** — not from daily logs. The daily log entry is written as a side effect (audit trail). Run early, run often — every call is a safe checkpoint. Multiple invocations per session are idempotent.
 
-All compilation happens in-session using Wibey's built-in Read/Write/Edit tools — no external dependencies.
+**What it extracts (in priority order):**
+1. **Decisions** — choices between alternatives, with full rationale and rejected paths
+2. **Dead ends** — what was tried and failed (prevents re-exploration)
+3. **Meta-instructions** — conventions, preferences, rules that persist across sessions
+4. **Patterns** — reusable approaches, anti-patterns, debugging heuristics
+5. **Concepts** — technical facts, configs, API behaviors (enhanced with Reasoning & Dead Ends sections)
 
-### Option 2: Ask Wibey Directly
+### Daily Log Compilation (with date argument)
 
-You can also just ask Wibey in plain English:
+Compile from previously saved daily logs — useful for batch processing or recompiling old sessions:
 
 ```
-Compile my daily logs into knowledge articles. Read .claude-memory-compiler/AGENTS.md
-for the schema, then process any new entries in .claude-memory-compiler/daily/.
+/compile-kb 2026-04-15       # compile a specific day
+/compile-kb --all            # compile all uncompiled logs
 ```
 
-### Option 3: Skip Compilation
+### Skip Compilation
 
 The daily logs alone are valuable. SessionStart injects the latest daily log into context, so Claude already "remembers" recent sessions even without compilation.
+
+## Knowledge Types
+
+| Type | Directory | What Gets Captured |
+|------|-----------|-------------------|
+| **Concepts** | `knowledge/concepts/` | Technical facts, configurations, API behaviors |
+| **Decisions** | `knowledge/decisions/` | Choices between alternatives with full rationale |
+| **Patterns** | `knowledge/patterns/` | Reusable approaches, anti-patterns, debugging heuristics |
+| **Connections** | `knowledge/connections/` | Non-obvious links between 2+ concepts |
+| **Meta-Instructions** | `knowledge/meta-instructions.md` | Living doc of conventions, preferences, behavioral rules |
+
+## Upgrading from v1
+
+If you already have a v1 installation (before the `decisions/`, `patterns/`, and `meta-instructions` additions), run the upgrade script from your project root:
+
+```bash
+bash /path/to/claude-memory-compiler-walmart/upgrade.sh
+```
+
+The upgrade:
+- Creates `knowledge/decisions/` and `knowledge/patterns/` directories
+- Bootstraps `knowledge/meta-instructions.md`
+- Migrates `index.md` to the new sectioned format (preserves existing entries)
+- Installs the enhanced `/compile-kb` v2 command (backs up the old one)
+
+Safe to run multiple times — won't overwrite existing content.
 
 ## Walmart Network Adaptations
 
