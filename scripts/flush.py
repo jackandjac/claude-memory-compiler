@@ -8,8 +8,7 @@ it directly to today's daily log. No LLM call — just structured capture.
 LLM-powered compilation (daily/ -> knowledge/) is a separate step run
 via `compile.py` either manually or triggered at end-of-day.
 
-Adapted for Walmart network: no external dependencies (no agent SDK,
-no uv, no pip installs). Pure Python 3.12+ stdlib only.
+No external dependencies — pure Python 3.12+ stdlib only.
 
 Usage:
     python3.13 flush.py <context_file.md> <session_id>

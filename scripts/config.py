@@ -20,7 +20,9 @@ LOG_FILE = KNOWLEDGE_DIR / "log.md"
 STATE_FILE = SCRIPTS_DIR / "state.json"
 
 # ── Timezone ───────────────────────────────────────────────────────────
-TIMEZONE = "America/Chicago"
+# Override with TZ environment variable (e.g. TZ=America/New_York)
+import os as _os
+TIMEZONE = _os.environ.get("TZ", "UTC")
 
 
 def now_iso() -> str:

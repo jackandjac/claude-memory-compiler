@@ -1,8 +1,8 @@
-# Claude Memory Compiler — Walmart Edition
+# Claude Memory Compiler
 
-Automatically captures your Wibey/Claude Code conversations into daily logs, compiles them into a searchable knowledge base, and injects that knowledge back into future sessions.
+Automatically captures your Claude Code conversations into daily logs, compiles them into a searchable knowledge base, and injects that knowledge back into future sessions.
 
-Adapted from [coleam00/claude-memory-compiler](https://github.com/coleam00/claude-memory-compiler) (Karpathy's LLM Knowledge Base architecture) for the Walmart network — **no external downloads, no pip installs, no uv, pure Python 3.12+ stdlib**.
+Based on [coleam00/claude-memory-compiler](https://github.com/coleam00/claude-memory-compiler) (Karpathy's LLM Knowledge Base architecture). **No external downloads, no pip installs, no uv — pure Python 3.12+ stdlib for all hooks.**
 
 ## How It Works
 
@@ -32,25 +32,25 @@ Adapted from [coleam00/claude-memory-compiler](https://github.com/coleam00/claud
 
 ### Prerequisites
 
-- Python 3.12+ (check: `python3.13 --version` or `/opt/homebrew/bin/python3.13 --version`)
-- Wibey CLI or Claude Code
+- Python 3.12+ (check: `python3.13 --version`)
+- Claude Code
 
-### Option 1: Ask Wibey (Recommended)
+### Option 1: Ask Claude Code (Recommended)
 
-Open Wibey in your project and paste this prompt:
+Open Claude Code in your project and paste this prompt:
 
 ```
-Clone https://gecgithub01.walmart.com/j0l0xg5/claude-memory-compiler-walmart.git to a temp
+Clone https://github.com/jackandjac/claude-memory-compiler.git to a temp
 directory, then run its setup.sh from my project root. This sets up Claude Code hooks so my
 conversations automatically get captured into daily logs, compiled into a knowledge base, and
 injected back into future sessions. Read the AGENTS.md for the full technical reference.
 ```
 
-Wibey will clone the repo, run setup, and configure everything for you.
+Claude Code will clone the repo, run setup, and configure everything for you.
 
-### Option 2: Wibey Skill (One Command)
+### Option 2: Slash Command (One Command)
 
-If you have the skill installed, just type:
+If you have the `/setup-memory-compiler` command installed, just type:
 
 ```
 /setup-memory-compiler
@@ -59,19 +59,19 @@ If you have the skill installed, just type:
 ### Option 3: Manual Setup
 
 ```bash
-# Clone this repo (one-time, from GEC GitHub)
-git clone https://gecgithub01.walmart.com/j0l0xg5/claude-memory-compiler-walmart.git
+# Clone this repo (one-time)
+git clone https://github.com/jackandjac/claude-memory-compiler.git
 
 # Go to your project
 cd /path/to/your-project
 
 # Run setup
-bash /path/to/claude-memory-compiler-walmart/setup.sh
+bash /path/to/claude-memory-compiler/setup.sh
 ```
 
 All three options do the same thing — the setup script:
 1. Copies hooks + scripts into `.claude-memory-compiler/` in your project
-2. Installs the `/compile-kb` slash command into `.wibey/commands/`
+2. Installs the `/compile-kb` slash command into `.claude/commands/`
 3. Creates the full directory structure (`daily/`, `knowledge/concepts/`, `knowledge/decisions/`, `knowledge/patterns/`, `knowledge/connections/`, `knowledge/qa/`, `reports/`)
 4. Bootstraps `knowledge/index.md`, `knowledge/log.md`, and `knowledge/meta-instructions.md`
 5. Merges hook config into your `.claude/settings.json` (preserves existing hooks)
@@ -79,7 +79,7 @@ All three options do the same thing — the setup script:
 
 ### Start Using It
 
-Just start a new Wibey session. The hooks activate automatically:
+Just start a new Claude Code session. The hooks activate automatically:
 - **SessionStart** — knowledge base injected into context
 - **PreCompact** — conversation captured before auto-compaction
 - **SessionEnd** — conversation captured to daily log
@@ -123,17 +123,16 @@ your-project/
 │   │   ├── connections/            # Cross-cutting insights
 │   │   └── qa/                     # Filed Q&A
 │   └── reports/                    # Lint reports
-├── .wibey/
-│   └── commands/
-│       └── compile-kb.md           # ← /compile-kb slash command
 ├── .claude/
+│   ├── commands/
+│   │   └── compile-kb.md           # ← /compile-kb slash command
 │   └── settings.json               # ← hooks configured here
 └── .gitignore                      # ← .claude-memory-compiler/ excluded
 ```
 
 ## Compilation (`/compile-kb`)
 
-The automatic capture pipeline (hooks → flush.py → daily log) works with pure Python and requires zero external dependencies. The **compilation step** uses the `/compile-kb` Wibey slash command — no VPN disconnect, no pip installs, no external tools needed.
+The automatic capture pipeline (hooks → flush.py → daily log) works with pure Python and requires zero external dependencies. The **compilation step** uses the `/compile-kb` Claude Code slash command.
 
 ### Incremental Save (Default)
 
@@ -180,7 +179,7 @@ The daily logs alone are valuable. SessionStart injects the latest daily log int
 If you already have a v1 installation (before the `decisions/`, `patterns/`, and `meta-instructions` additions), run the upgrade script from your project root:
 
 ```bash
-bash /path/to/claude-memory-compiler-walmart/upgrade.sh
+bash /path/to/claude-memory-compiler/upgrade.sh
 ```
 
 The upgrade:
@@ -191,22 +190,11 @@ The upgrade:
 
 Safe to run multiple times — won't overwrite existing content.
 
-## Walmart Network Adaptations
-
-| Original | Walmart Edition | Why |
-|----------|----------------|-----|
-| `uv run python` | `/opt/homebrew/bin/python3.13` | Can't install uv via curl (network blocked) |
-| `claude-agent-sdk` in flush.py | Pure Python stdlib | Can't pip install from PyPI (whl blocked) |
-| `pip install` dependencies | Zero dependencies | All hooks + flush use stdlib only |
-| Background LLM flush | Direct transcript append | No agent SDK → no LLM summarization in flush |
-
-The hooks auto-detect Python 3.12+ from PATH or `/opt/homebrew/bin/`.
-
 ## Troubleshooting
 
 ### Hooks not firing?
 - Check `.claude/settings.json` has the `SessionStart`, `SessionEnd`, `PreCompact` entries
-- Check the Python path: `which python3.13` or `/opt/homebrew/bin/python3.13 --version`
+- Check the Python path: `which python3.13`
 - Start a **new** session (hooks only activate on new sessions)
 
 ### Daily logs empty?

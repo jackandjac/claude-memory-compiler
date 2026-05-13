@@ -28,3 +28,13 @@ reports/
 Thumbs.db
 
 .obsidian/
+
+# IDE metadata
+.idea/
+
+# Knowledge base structural files (user-specific, not for version control)
+knowledge/decisions/
+knowledge/patterns/
+knowledge/index.md
+knowledge/log.md
+knowledge/meta-instructions.md

@@ -1,16 +1,16 @@
 #!/bin/bash
 # ============================================================================
-# Claude Memory Compiler — Setup Script (Walmart Edition)
+# Claude Memory Compiler — Setup Script
 #
 # Installs the memory compiler into any project directory.
 # Run from inside the target project:
 #
-#   bash /path/to/claude-memory-compiler-walmart/setup.sh
+#   bash /path/to/claude-memory-compiler/setup.sh
 #
 # Or clone the repo first, then:
 #
 #   cd your-project
-#   bash ../claude-memory-compiler-walmart/setup.sh
+#   bash ../claude-memory-compiler/setup.sh
 #
 # What it does:
 #   1. Copies hooks + scripts into .claude-memory-compiler/ in your project
@@ -27,7 +27,7 @@ PROJECT_DIR="$(pwd)"
 TARGET_DIR="$PROJECT_DIR/.claude-memory-compiler"
 
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║  Claude Memory Compiler — Walmart Edition Setup         ║"
+echo "║  Claude Memory Compiler — Setup                         ║"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
 echo "  Source:  $SCRIPT_DIR"
@@ -98,7 +98,7 @@ echo "  ✓ Files copied to $TARGET_DIR"
 
 # ── Step 1b: Install /compile-kb slash command ───────────────────────────
 echo "▸ Installing /compile-kb slash command..."
-COMMANDS_DIR="$PROJECT_DIR/.wibey/commands"
+COMMANDS_DIR="$PROJECT_DIR/.claude/commands"
 mkdir -p "$COMMANDS_DIR"
 
 for cmd_file in "$SCRIPT_DIR"/commands/*.md; do
@@ -232,5 +232,5 @@ echo "║  Daily logs:  .claude-memory-compiler/daily/             ║"
 echo "║  Knowledge:   .claude-memory-compiler/knowledge/         ║"
 echo "║  Debug log:   .claude-memory-compiler/scripts/flush.log  ║"
 echo "║                                                          ║"
-echo "║  Start a new Wibey/Claude Code session to activate.      ║"
+echo "║  Start a new Claude Code session to activate.            ║"
 echo "╚══════════════════════════════════════════════════════════╝"

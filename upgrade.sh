@@ -11,7 +11,7 @@
 #
 # Run from inside a project that already has .claude-memory-compiler/ installed:
 #
-#   bash /path/to/claude-memory-compiler2.0-walmart/upgrade.sh
+#   bash /path/to/claude-memory-compiler/upgrade.sh
 #
 # Safe to run multiple times — won't overwrite existing content.
 # ============================================================================
@@ -122,7 +122,7 @@ fi
 # ── Step 4: Upgrade /compile-kb slash command ────────────────────────────
 echo "▸ Upgrading /compile-kb command..."
 
-COMMANDS_DIR="$PROJECT_DIR/.wibey/commands"
+COMMANDS_DIR="$PROJECT_DIR/.claude/commands"
 mkdir -p "$COMMANDS_DIR"
 
 if [ -f "$COMMANDS_DIR/compile-kb.md" ]; then
@@ -161,5 +161,5 @@ echo "║    /compile-kb            incremental save (from convo)  ║"
 echo "║    /compile-kb 2026-04-15 compile a specific daily log   ║"
 echo "║    /compile-kb --all      compile all uncompiled logs    ║"
 echo "║                                                          ║"
-echo "║  Run /compile-kb in your next Wibey session to try it.   ║"
+echo "║  Run /compile-kb in your next Claude Code session.       ║"
 echo "╚══════════════════════════════════════════════════════════╝"
