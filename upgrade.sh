@@ -50,7 +50,24 @@ echo "  ✓ knowledge/patterns/"
 echo "▸ Setting up meta-instructions..."
 
 if [ ! -f "$TARGET_DIR/knowledge/meta-instructions.md" ]; then
-    cp "$SCRIPT_DIR/knowledge-templates/meta-instructions.md" "$TARGET_DIR/knowledge/meta-instructions.md"
+    cat > "$TARGET_DIR/knowledge/meta-instructions.md" << 'METAEOF'
+# Meta-Instructions
+
+> Behavioral rules, conventions, and preferences extracted from conversations.
+> Updated incrementally by /compile-kb. Each rule cites its source.
+
+## Coding Conventions
+
+## Tool & Workflow Rules
+
+## Project Conventions
+
+## Debugging Heuristics
+
+## User Preferences
+
+## AI Assistant Instructions
+METAEOF
     echo "  ✓ Created knowledge/meta-instructions.md"
 else
     echo "  ⚠ knowledge/meta-instructions.md already exists — skipping (won't overwrite)"
@@ -68,7 +85,29 @@ if [ -f "$INDEX_FILE" ]; then
         ENTRY_COUNT=$(grep -c "^\|" "$INDEX_FILE" 2>/dev/null || echo "0")
         if [ "$ENTRY_COUNT" -le 2 ]; then
             # Empty or header-only — safe to replace
-            cp "$SCRIPT_DIR/knowledge-templates/index.md" "$INDEX_FILE"
+            cat > "$INDEX_FILE" << 'INDEXEOF'
+# Knowledge Base Index
+
+## Concepts
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Decisions
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Patterns
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Connections
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+INDEXEOF
             echo "  ✓ Upgraded index.md to sectioned format (was empty)"
         else
             # Has existing entries — migrate them into Concepts section
@@ -115,7 +154,29 @@ INDEXEOF
         fi
     fi
 else
-    cp "$SCRIPT_DIR/knowledge-templates/index.md" "$INDEX_FILE"
+    cat > "$INDEX_FILE" << 'INDEXEOF'
+# Knowledge Base Index
+
+## Concepts
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Decisions
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Patterns
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Connections
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+INDEXEOF
     echo "  ✓ Created index.md with sectioned format"
 fi
 

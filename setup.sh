@@ -85,13 +85,56 @@ cp "$SCRIPT_DIR"/AGENTS.md               "$TARGET_DIR"/
 
 # Bootstrap knowledge base structural files (only if they don't exist)
 if [ ! -f "$TARGET_DIR/knowledge/index.md" ]; then
-    cp "$SCRIPT_DIR"/knowledge/index.md "$TARGET_DIR"/knowledge/
+    cat > "$TARGET_DIR/knowledge/index.md" << 'INDEXEOF'
+# Knowledge Base Index
+
+## Concepts
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Decisions
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Patterns
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+
+## Connections
+
+| Article | Summary | Compiled From | Updated |
+|---------|---------|---------------|---------|
+INDEXEOF
 fi
 if [ ! -f "$TARGET_DIR/knowledge/log.md" ]; then
-    cp "$SCRIPT_DIR"/knowledge/log.md "$TARGET_DIR"/knowledge/
+    cat > "$TARGET_DIR/knowledge/log.md" << 'LOGEOF'
+# Knowledge Base Build Log
+
+<!-- Entries appended by /compile-kb -->
+LOGEOF
 fi
 if [ ! -f "$TARGET_DIR/knowledge/meta-instructions.md" ]; then
-    cp "$SCRIPT_DIR"/knowledge/meta-instructions.md "$TARGET_DIR"/knowledge/
+    cat > "$TARGET_DIR/knowledge/meta-instructions.md" << 'METAEOF'
+# Meta-Instructions
+
+> Behavioral rules, conventions, and preferences extracted from conversations.
+> Updated incrementally by /compile-kb. Each rule cites its source.
+
+## Coding Conventions
+
+## Tool & Workflow Rules
+
+## Project Conventions
+
+## Debugging Heuristics
+
+## User Preferences
+
+## AI Assistant Instructions
+METAEOF
 fi
 
 echo "  ✓ Files copied to $TARGET_DIR"
