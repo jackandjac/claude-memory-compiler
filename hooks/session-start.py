@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parent.parent
 KNOWLEDGE_DIR = ROOT / "knowledge"
 DAILY_DIR = ROOT / "daily"
 INDEX_FILE = KNOWLEDGE_DIR / "index.md"
+META_FILE = KNOWLEDGE_DIR / "meta-instructions.md"
 
 MAX_CONTEXT_CHARS = 20_000
 MAX_LOG_LINES = 30
@@ -61,6 +62,11 @@ def build_context() -> str:
         parts.append(f"## Knowledge Base Index\n\n{index_content}")
     else:
         parts.append("## Knowledge Base Index\n\n(empty - no articles compiled yet)")
+
+    # Meta-instructions: conventions and rules that apply to every session.
+    # Placed before the daily log so truncation cuts the log first.
+    if META_FILE.exists():
+        parts.append(META_FILE.read_text(encoding="utf-8").strip())
 
     # Recent daily log
     recent_log = get_recent_log()
